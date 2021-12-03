@@ -1,6 +1,9 @@
 (ns challenge.logic
+  (:use [clojure pprint])
   (:require [java-time :as time]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [schema.core :as s]
+            [challenge.db :as c.db]))
 
 ;---|Pure fuctions|------------------------------------------------------------------------
 
@@ -27,6 +30,25 @@
   {:total     (calculate-total-by-filter shops)
    :filter-by filter}
   )
+
+;---|Adds new shops|------------------------------------------------------------------------
+
+;(defn update-shops
+;  [shops new-shop]
+;  (pprint "update-shops" shops)
+;  (update shops conj new-shop))
+;
+;(defn create-new-shop!
+;  [shops new-shop]
+;  (pprint "create-new-shops!" shops)
+;  (swap! shops update-shops new-shop))
+
+(s/defn add-new-shop :- c.db/Shop
+  [new-shop :- c.db/Shop]
+  (let [shops (atom (c.db/all-shops))]
+       [new-shop {:id 7}]
+       (swap! shops conj new-shop)
+       (pprint @shops)))
 
 ;---|By category|------------------------------------------------------------------------
 

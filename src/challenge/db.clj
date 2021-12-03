@@ -1,11 +1,11 @@
 (ns challenge.db
-  (:require [java-time :as time]))
+  (:require [java-time :as time]
+            [schema.core :as s]))
 
 ;--------- COMPRAS -----------------------------------------------
 
 (defn set-time [year month day hour minute second]
   (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date-time year month day hour minute second)))
-
 
 (def shops-1 {:id            1
               :date          (set-time 2021 11 20 12 22 9),
@@ -51,9 +51,9 @@
 
 (def shops-5 {:id            5
               :date          (set-time 2021 11 10 17 8 29),
-              :products      {:hamburguer  {:amount 4
+              :products      {:hamburguer  {:amount     4
                                             :unit-price 40}
-                              :french-frie {:amount 1
+                              :french-frie {:amount     1
                                             :unit-price 20}
                               },
               :category      "Food",
@@ -61,9 +61,9 @@
 
 (def shops-6 {:id            6
               :date          (set-time 2021 10 8 10 29 9),
-              :products      {:boots    {:amount 2
+              :products      {:boots    {:amount     2
                                          :unit-price 235.9}
-                              :hand-bag {:amount 2
+                              :hand-bag {:amount     2
                                          :unit-price 350}
                               },
               :category      "Clothing",
@@ -72,21 +72,37 @@
 (defn all-shops []
   [shops-1, shops-2, shops-3, shops-4, shops-5, shops-6])
 
+(defn new-shop []
+  {:id            (inc (count all-shops))
+   :date          (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date))
+   :products      {}
+   :category      s/Str
+   :establishment s/Str
+   })
+
+(s/def Product {s/Keyword s/Num})
+(s/def Products { s/Keyword Product})
+(s/def Shop {:id s/Num
+             :date s/Str
+             :products Products
+             :category s/Str
+             :establishment s/Str})
+
 ;--------- CARTÕES -----------------------------------------------
 
-(def card-1 {:id 1
+(def card-1 {:id       1
              :number   "1234 8769 6774 9874",
              :cvv      "456",
              :validity (time/format "MM/yyyy" (time/local-date 2025 6)),
              :limit    8000})
 
-(def card-2 {:id 2
+(def card-2 {:id       2
              :number   "6774 9874 1234 8769",
              :cvv      "326",
              :validity (time/format "MM/yyyy" (time/local-date 2029 12)),
              :limit    10000})
 
-(def card-3 {:id 3
+(def card-3 {:id       3
              :number   "8769 1234 9874 7654",
              :cvv      "136",
              :validity (time/format "MM/yyyy" (time/local-date 2022 8)),
