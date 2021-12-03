@@ -18,4 +18,12 @@
 ;
 ;(println (c.logic/expanding-by-establishment (c.db/all-shops) "RCHLO"))
 
-(println (c.logic/add-new-shop {:products {:boots 2 :unit-price 300}}))
+(println (c.logic/create-new-shop
+           "Fenty Beauty"
+           "Cosmetics"
+           {:boots    {:amount     2
+                       :unit-price 235.9}
+            :hand-bag {:amount     2
+                       :unit-price 350}
+            }))
+

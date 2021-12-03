@@ -72,14 +72,6 @@
 (defn all-shops []
   [shops-1, shops-2, shops-3, shops-4, shops-5, shops-6])
 
-(defn new-shop []
-  {:id            (inc (count all-shops))
-   :date          (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date))
-   :products      {}
-   :category      s/Str
-   :establishment s/Str
-   })
-
 (s/def Product {s/Keyword s/Num})
 (s/def Products { s/Keyword Product})
 (s/def Shop {:id s/Num
@@ -87,6 +79,17 @@
              :products Products
              :category s/Str
              :establishment s/Str})
+(s/def ShopList [Shop])
+
+;(s/validate Shop {:id            23
+;                  :date          (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date-time))
+;                  :products      {:boots    {:amount     2
+;                                             :unit-price 235.9}
+;                                  :hand-bag {:amount     2
+;                                             :unit-price 350}
+;                                  }
+;                  :category      "C"
+;                  :establishment "B"})
 
 ;--------- CARTÕES -----------------------------------------------
 

@@ -33,22 +33,21 @@
 
 ;---|Adds new shops|------------------------------------------------------------------------
 
-;(defn update-shops
-;  [shops new-shop]
-;  (pprint "update-shops" shops)
-;  (update shops conj new-shop))
-;
-;(defn create-new-shop!
-;  [shops new-shop]
-;  (pprint "create-new-shops!" shops)
-;  (swap! shops update-shops new-shop))
-
-(s/defn add-new-shop :- c.db/Shop
+(s/defn add-new-shop :- c.db/ShopList
   [new-shop :- c.db/Shop]
   (let [shops (atom (c.db/all-shops))]
-       [new-shop {:id 7}]
-       (swap! shops conj new-shop)
-       (pprint @shops)))
+    (swap! shops conj new-shop)))
+
+(s/defn create-new-shop :- c.db/Shop
+  [establishment :- s/Str category :- s/Str products :- c.db/Products]
+  (let [new-shop {:id            (inc (count (c.db/all-shops)))
+                   :date          (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date-time))
+                   :products      products
+                   :category      category
+                   :establishment establishment}
+       new-shop-list (add-new-shop new-shop)]
+      (pprint new-shop-list)
+       (get new-shop-list (- (count new-shop-list) 1))))
 
 ;---|By category|------------------------------------------------------------------------
 
