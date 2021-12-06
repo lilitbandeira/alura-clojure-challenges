@@ -17,7 +17,7 @@
 (def PosInt (s/pred pos-int?))
 
 (def shops-1 {:id            1
-              :date          (set-time 2021 11 20 12 22 9),
+              :date          (set-time 2021 12 20 12 22 9),
               :products      {:sandwich {:amount     2
                                          :unit-price 35.9}
                               :soda     {:amount     2
@@ -27,7 +27,7 @@
               :establishment "Subway"})
 
 (def shops-2 {:id            2
-              :date          (set-time 2021 11 21 14 50 54),
+              :date          (set-time 2021 12 21 14 50 54),
               :products      {:shirt {:amount     4
                                       :unit-price 35.9}
                               :heel  {:amount     3
@@ -37,7 +37,7 @@
               :establishment "RCHLO"})
 
 (def shops-3 {:id            3
-              :date          (set-time 2021 11 18 10 22 49),
+              :date          (set-time 2021 12 18 10 22 49),
               :products      {:ticket {:amount     42
                                        :unit-price 5.9}
                               },
@@ -45,7 +45,7 @@
               :establishment "Bus"})
 
 (def shops-4 {:id            4
-              :date          (set-time 2021 10 3 4 11 54),
+              :date          (set-time 2021 12 3 4 11 54),
               :products      {:milk   {:amount     4
                                        :unit-price 5.3}
                               :bread  {:amount     2
@@ -59,7 +59,7 @@
               :establishment "Supermarket"})
 
 (def shops-5 {:id            5
-              :date          (set-time 2021 11 10 17 8 29),
+              :date          (set-time 2021 12 10 17 8 29),
               :products      {:hamburguer  {:amount     4
                                             :unit-price 40}
                               :french-frie {:amount     1
@@ -69,7 +69,7 @@
               :establishment "MC"})
 
 (def shops-6 {:id            6
-              :date          (set-time 2021 10 8 10 29 9),
+              :date          (set-time 2021 12 8 10 29 9),
               :products      {:boots    {:amount     2
                                          :unit-price 235.9}
                               :hand-bag {:amount     2
@@ -81,7 +81,8 @@
 (defn all-shops []
   [shops-1, shops-2, shops-3, shops-4, shops-5, shops-6])
 
-(s/def Product {s/Keyword s/Num})
+(s/def Product {:amount s/Num
+                :unit-price s/Num})
 (s/def Products {s/Keyword Product})
 (s/def Shop {:id            PosInt
              :date          s/Str
@@ -90,14 +91,14 @@
              :establishment s/Str})
 (s/def ShopList [Shop])
 
-;(s/validate Shop {:id            7
-;                  :date          (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date-time))
-;                  :products      {:boots    {:amount     2
-;                                             :unit-price 235.9}
-;                                  :hand-bag {:amount     2
-;                                             :unit-price 350}}
-;                  :category      "Food"
-;                  :establishment "B"})
+(s/validate Shop {:id            7
+                  :date          (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date-time))
+                  :products      {:boots    {:amount     2
+                                             :unit-price 235.9}
+                                  :hand-bag {:amount     2
+                                             :unit-price 350}}
+                  :category      "Food"
+                  :establishment "B"})
 
 
 ;--------- CARTÕES -----------------------------------------------

@@ -31,49 +31,21 @@
    :filter-by filter}
   )
 
-;---|Adds new shops|------------------------------------------------------------------------
-
-(s/defn add-new-shop :- c.db/ShopList
-  [shoplist :- c.db/ShopList
-   new-shop :- c.db/Shop]
-  (let [shops (atom shoplist)]
-    (swap! shops conj new-shop)))
-
-(defn verify-empty-products
-  [products]
-  (->> products
-       vals
-       (map empty?)
-       (some true?)))
-
-(s/defn create-new-shop :- c.db/Shop
-  [shoplist :- c.db/ShopList
-   establishment :- s/Str
-   category :- s/Str
-   products :- c.db/Products]
-  (if (and (not= products {})
-           (not= category "")
-           (not= establishment "")
-           (not (verify-empty-products products)))
-    (let [new-shop {:id            (inc (count shoplist))
-                    :date          (c.db/set-time)
-                    :products      products
-                    :category      category
-                    :establishment establishment}
-          new-shop-list (add-new-shop shoplist new-shop)]
-      (pprint new-shop-list)
-      (get new-shop-list (- (count new-shop-list) 1)))
-    (throw (ex-info "Não é possível receber parâmetros vazios"
-                    {:products products, :category category, :establishment establishment}))))
-
 ;---|By category|------------------------------------------------------------------------
+(defn category-exists?
+  [shops category]
+  (->> shops
+       (map :category)
+       (some #(= category %))))
 
 (defn expanding-by-category
   ([shops category]
-   (->> shops
-        (group-by :category)
-        (map expanding-by-filter)
-        (filter #(= (:filter-by %) category))))
+   (if (category-exists? shops category)
+     (->> shops
+          (group-by :category)
+          (map expanding-by-filter)
+          (filter #(= (:filter-by %) category)))
+     (throw (ex-info "Category does not exist" {:shops shops, :typo :Category-Does-Not-Exist}))))
   ([shops]
    (->> shops
         (group-by :category)
@@ -125,3 +97,30 @@
        (group-by :id)
        (map total-expanding-by-filter)
        (filter #(>= (:total %) price))))
+
+;---|Adds new shops|------------------------------------------------------------------------
+(s/set-fn-validation! true)
+
+(s/defn add-new-shop :- c.db/ShopList
+  [shoplist :- c.db/ShopList
+   new-shop :- c.db/Shop]
+  (let [shops (atom shoplist)]
+    (swap! shops conj new-shop)))
+
+(s/defn create-new-shop :- c.db/Shop
+  [shoplist :- c.db/ShopList
+   establishment :- s/Str
+   category :- s/Str
+   products :- c.db/Products]
+  (if (and (not= products {})
+           (not= category "")
+           (not= establishment ""))
+    (let [new-shop {:id            (inc (count shoplist))
+                    :date          (c.db/set-time)
+                    :products      products
+                    :category      category
+                    :establishment establishment}
+          new-shop-list (add-new-shop shoplist new-shop)]
+      (get new-shop-list (- (count new-shop-list) 1)))
+    (throw (ex-info "Cannot receive empty parameters"
+                    {:products products, :category category, :establishment establishment, :typo :Impossible-To-Receive-Empty-Parameters}))))
