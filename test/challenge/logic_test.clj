@@ -15,14 +15,44 @@
                             :prisma       {:amount 2, :unit-price 350}}
             :category      "Duck",
             :establishment "Mic"}
-        (create-new-shop "Mic"
-                         "Duck"
-                         {:refrigerator {:amount     100
-                                         :unit-price 2350.9}
-                          :prisma       {:amount     2
-                                         :unit-price 350}}))))
+           (create-new-shop (c.db/all-shops)
+                            "Mic"
+                            "Duck"
+                            {:refrigerator {:amount     100
+                                            :unit-price 2350.9}
+                             :prisma       {:amount     2
+                                            :unit-price 350}}))))
 
-(testing "Recusa nova compra se há entidades vazias"))
+  (testing "Recusa nova compra se há entidades vazias"
+    ())
+
+  (testing "Recusa nova compra se há entidades nulas"
+    (is (thrown? clojure.lang.ExceptionInfo (create-new-shop (c.db/all-shops)
+                                                             "Mic"
+                                                             nil
+                                                             {:refrigerator {:amount     100
+                                                                             :unit-price 2350.9}
+                                                              :prisma       {:amount     2
+                                                                             :unit-price 350}})))
+    (is (thrown? clojure.lang.ExceptionInfo (create-new-shop (c.db/all-shops)
+                                                             nil
+                                                             "Duck"
+                                                             {:refrigerator {:amount     100
+                                                                             :unit-price 2350.9}
+                                                              :prisma       {:amount     2
+                                                                             :unit-price 350}})))
+    (is (thrown? clojure.lang.ExceptionInfo (create-new-shop (c.db/all-shops)
+                                                             "Mic"
+                                                             "Duck"
+                                                             nil)))
+    (is (thrown? clojure.lang.ExceptionInfo (create-new-shop (c.db/all-shops)
+                                                             "Mic"
+                                                             "Duck"
+                                                             {:refrigerator nil
+                                                              :prisma       {:amount     2
+                                                                             :unit-price 350}})))))
+
+; extrair id e date para testar isoladas e testar add-new-shop
 
 
 

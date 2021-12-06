@@ -34,20 +34,37 @@
 ;---|Adds new shops|------------------------------------------------------------------------
 
 (s/defn add-new-shop :- c.db/ShopList
-  [new-shop :- c.db/Shop]
-  (let [shops (atom (c.db/all-shops))]
+  [shoplist :- c.db/ShopList
+   new-shop :- c.db/Shop]
+  (let [shops (atom shoplist)]
     (swap! shops conj new-shop)))
 
+(defn verify-empty-products
+  [products]
+  (->> products
+       vals
+       (map empty?)
+       (some true?)))
+
 (s/defn create-new-shop :- c.db/Shop
-  [establishment :- s/Str category :- s/Str products :- c.db/Products]
-  (let [new-shop {:id            (inc (count (c.db/all-shops)))
-                   :date          (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date-time))
-                   :products      products
-                   :category      category
-                   :establishment establishment}
-       new-shop-list (add-new-shop new-shop)]
+  [shoplist :- c.db/ShopList
+   establishment :- s/Str
+   category :- s/Str
+   products :- c.db/Products]
+  (if (and (not= products {})
+           (not= category "")
+           (not= establishment "")
+           (not (verify-empty-products products)))
+    (let [new-shop {:id            (inc (count shoplist))
+                    :date          (c.db/set-time)
+                    :products      products
+                    :category      category
+                    :establishment establishment}
+          new-shop-list (add-new-shop shoplist new-shop)]
       (pprint new-shop-list)
-       (get new-shop-list (- (count new-shop-list) 1))))
+      (get new-shop-list (- (count new-shop-list) 1)))
+    (throw (ex-info "Não é possível receber parâmetros vazios"
+                    {:products products, :category category, :establishment establishment}))))
 
 ;---|By category|------------------------------------------------------------------------
 

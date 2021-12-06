@@ -4,8 +4,17 @@
 
 ;--------- COMPRAS -----------------------------------------------
 
-(defn set-time [year month day hour minute second]
-  (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date-time year month day hour minute second)))
+(defn set-time
+  ([]
+   (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date-time)))
+  ([year month day hour minute second]
+   (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date-time year month day hour minute second))))
+
+;(defn id-generate
+;  []
+;  (java.util.UUID/randomUUID))
+
+(def PosInt (s/pred pos-int?))
 
 (def shops-1 {:id            1
               :date          (set-time 2021 11 20 12 22 9),
@@ -73,23 +82,23 @@
   [shops-1, shops-2, shops-3, shops-4, shops-5, shops-6])
 
 (s/def Product {s/Keyword s/Num})
-(s/def Products { s/Keyword Product})
-(s/def Shop {:id s/Num
-             :date s/Str
-             :products Products
-             :category s/Str
+(s/def Products {s/Keyword Product})
+(s/def Shop {:id            PosInt
+             :date          s/Str
+             :products      Products
+             :category      s/Str
              :establishment s/Str})
 (s/def ShopList [Shop])
 
-;(s/validate Shop {:id            23
+;(s/validate Shop {:id            7
 ;                  :date          (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date-time))
 ;                  :products      {:boots    {:amount     2
 ;                                             :unit-price 235.9}
 ;                                  :hand-bag {:amount     2
-;                                             :unit-price 350}
-;                                  }
-;                  :category      "C"
+;                                             :unit-price 350}}
+;                  :category      "Food"
 ;                  :establishment "B"})
+
 
 ;--------- CARTÕES -----------------------------------------------
 
