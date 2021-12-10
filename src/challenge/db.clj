@@ -1,6 +1,68 @@
 (ns challenge.db
   (:require [java-time :as time]
-            [schema.core :as s]))
+            [schema.core :as s]
+            [datomic.api :as d]))
+
+;-----------------------------------------------------------------
+
+(def db-uri "datomic:dev://localhost:4334/ecommerce")
+
+(def schema-db [{:db/ident       :purchase/date
+                 :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :purchase/value
+                 :db/valueType   :db.type/bigdec
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :purchase/category
+                 :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :purchase/establishment
+                 :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :card/number
+                 :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :card/cvv
+                 :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :card/validity
+                 :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :card/limit
+                 :db/valueType   :db.type/bigdec
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :client/name
+                 :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :client/cpf
+                 :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :client/email
+                 :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}])
+
+(defn open-connection []
+  (d/create-database db-uri)
+  (d/connect db-uri))
+
+(defn drop-database []
+  (d/delete-database db-uri))
+
+(defn create-schema [connection]
+  (d/transact connection schema-db))
+
+
+
 
 ;--------- COMPRAS -----------------------------------------------
 
@@ -81,7 +143,7 @@
 (defn all-shops []
   [shops-1, shops-2, shops-3, shops-4, shops-5, shops-6])
 
-(s/def Product {:amount s/Num
+(s/def Product {:amount     s/Num
                 :unit-price s/Num})
 (s/def Products {s/Keyword Product})
 (s/def Shop {:id            PosInt
