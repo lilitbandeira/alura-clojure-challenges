@@ -7,23 +7,14 @@
 
 (def db-uri "datomic:dev://localhost:4334/ecommerce")
 
-(def schema-db [{:db/ident       :purchase/date
-                 :db/valueType   :db.type/string
-                 :db/cardinality :db.cardinality/one}
+(defn open-connection []
+  (d/create-database db-uri)
+  (d/connect db-uri))
 
-                {:db/ident       :purchase/value
-                 :db/valueType   :db.type/bigdec
-                 :db/cardinality :db.cardinality/one}
+(defn drop-database []
+  (d/delete-database db-uri))
 
-                {:db/ident       :purchase/category
-                 :db/valueType   :db.type/string
-                 :db/cardinality :db.cardinality/one}
-
-                {:db/ident       :purchase/establishment
-                 :db/valueType   :db.type/string
-                 :db/cardinality :db.cardinality/one}
-
-                {:db/ident       :card/number
+(def schema-db [{:db/ident       :card/number
                  :db/valueType   :db.type/string
                  :db/cardinality :db.cardinality/one}
 
@@ -39,28 +30,52 @@
                  :db/valueType   :db.type/bigdec
                  :db/cardinality :db.cardinality/one}
 
-                {:db/ident       :client/name
+                {:db/ident       :costumer/name
+                 :db/valueType   :db.type/tuple
+                 :db/tupleAttrs  :db/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :costumer/cpf
+                 :db/valueType   :db.type/tuple
+                 :db/tupleAttrs  :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :purchase/date
                  :db/valueType   :db.type/string
                  :db/cardinality :db.cardinality/one}
 
-                {:db/ident       :client/cpf
+                {:db/ident       :purchase/value
+                 :db/valueType   :db.type/bigdec
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :purchase/category
                  :db/valueType   :db.type/string
                  :db/cardinality :db.cardinality/one}
 
-                {:db/ident       :client/email
+                {:db/ident       :purchase/establishment
                  :db/valueType   :db.type/string
-                 :db/cardinality :db.cardinality/one}])
+                 :db/cardinality :db.cardinality/one}
 
-(defn open-connection []
-  (d/create-database db-uri)
-  (d/connect db-uri))
-
-(defn drop-database []
-  (d/delete-database db-uri))
+                {:db/ident :card/purchase
+                 :db/valueType :db.type/tuple
+                 :db/cardinality :db.cardinality/many
+                 :db/tupleAttrs [:purchase/date :purchase/value :purchase/category :purchase/establishment]}])
 
 (defn create-schema [connection]
   (d/transact connection schema-db))
 
+; lógicas referentes as queries do datomic
+; dúvida: onde chamaremos as funções que sobe e derruba o banco? server.clj? core.clj?
+
+; PRECISAMOS RODAR PRA VER SE TÁ TUDO CERTO ATÉ AQUI!!!!
+
+
+
+
+
+
+
+;----- OLD ----------------------------------------------------------
 
 
 
@@ -153,14 +168,14 @@
              :establishment s/Str})
 (s/def ShopList [Shop])
 
-(s/validate Shop {:id            7
-                  :date          (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date-time))
-                  :products      {:boots    {:amount     2
-                                             :unit-price 235.9}
-                                  :hand-bag {:amount     2
-                                             :unit-price 350}}
-                  :category      "Food"
-                  :establishment "B"})
+;(s/validate Shop {:id            7
+;                  :date          (time/format "dd/MM/yyyy hh:mm:ss" (time/local-date-time))
+;                  :products      {:boots    {:amount     2
+;                                             :unit-price 235.9}
+;                                  :hand-bag {:amount     2
+;                                             :unit-price 350}}
+;                  :category      "Food"
+;                  :establishment "B"})
 
 
 ;--------- CARTÕES -----------------------------------------------
