@@ -1,10 +1,11 @@
 (ns challenge.core
   (:require [challenge.db :as c.db]
-            [challenge.logic :as c.logic]))
+            [challenge.logic :as c.logic])
+  (:use clojure.pprint))
 
-(println "FILTER BY CATEGORY")
-
-(println (c.logic/expanding-by-category (c.db/all-shops) "Clothing"))
+;(println "FILTER BY CATEGORY")
+;
+;(println (c.logic/expanding-by-category (c.db/all-shops) "Clothing"))
 
 ;(println "CURRENT MONTH RESUME")
 ;
@@ -28,3 +29,4 @@
 ;                       :unit-price 235.9}
 ;            :hand-bag {:amount     2
 ;                       :unit-price 350}}))
+

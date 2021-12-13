@@ -14,31 +14,11 @@
 (defn drop-database []
   (d/delete-database db-uri))
 
-(def schema-db [{:db/ident       :card/number
-                 :db/valueType   :db.type/string
-                 :db/cardinality :db.cardinality/one}
-
-                {:db/ident       :card/cvv
-                 :db/valueType   :db.type/string
-                 :db/cardinality :db.cardinality/one}
-
-                {:db/ident       :card/validity
-                 :db/valueType   :db.type/string
-                 :db/cardinality :db.cardinality/one}
-
-                {:db/ident       :card/limit
-                 :db/valueType   :db.type/bigdec
-                 :db/cardinality :db.cardinality/one}
-
-                {:db/ident       :costumer/name
-                 :db/valueType   :db.type/tuple
-                 :db/tupleAttrs  :db/string
-                 :db/cardinality :db.cardinality/one}
-
-                {:db/ident       :costumer/cpf
-                 :db/valueType   :db.type/tuple
-                 :db/tupleAttrs  :db.type/string
-                 :db/cardinality :db.cardinality/one}
+(def schema-db [; ---------- PURCHASE -----------------
+                {:db/ident       :purchase/id
+                 :db/valueType   :db.type/uuid
+                 :db/cardinality :db.cardinality/one
+                 :db/unique      :db.unique/identity}
 
                 {:db/ident       :purchase/date
                  :db/valueType   :db.type/string
@@ -56,13 +36,60 @@
                  :db/valueType   :db.type/string
                  :db/cardinality :db.cardinality/one}
 
-                {:db/ident :card/purchase
-                 :db/valueType :db.type/tuple
-                 :db/cardinality :db.cardinality/many
-                 :db/tupleAttrs [:purchase/date :purchase/value :purchase/category :purchase/establishment]}])
+                {:db/ident       :purchase/card
+                 :db/valueType   :db.type/ref
+                 :db/cardinality :db.cardinality/one}
+
+                ; ---------- CARD -----------------
+
+                {:db/ident       :card/id
+                 :db/valueType   :db.type/uuid
+                 :db/cardinality :db.cardinality/one
+                 :db/unique      :db.unique/identity}
+
+                {:db/ident       :card/number
+                 :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :card/cvv
+                 :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :card/validity
+                 :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :card/limit
+                 :db/valueType   :db.type/bigdec
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :card/costumer
+                 :db/valueType   :db.type/ref
+                 :db/cardinality :db.cardinality/one}
+
+                ; ---------- COSTUMER -----------------
+
+                {:db/ident       :costumer/id
+                 :db/valueType   :db.type/uuid
+                 :db/cardinality :db.cardinality/one
+                 :db/unique      :db.unique/identity}
+
+                {:db/ident       :costumer/name
+                 :db/valueType   :db.type/tuple
+                 :db/tupleAttrs  :db/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :costumer/cpf
+                 :db/valueType   :db.type/tuple
+                 :db/tupleAttrs  :db.type/string
+                 :db/cardinality :db.cardinality/one}])
 
 (defn create-schema [connection]
   (d/transact connection schema-db))
+
+(defn all [conn]                              ;query
+  (d/q '[:find ?purchase-category
+         :where [?purchase-category :purchase/category]] conn))
 
 ; lógicas referentes as queries do datomic
 ; dúvida: onde chamaremos as funções que sobe e derruba o banco? server.clj? core.clj?
