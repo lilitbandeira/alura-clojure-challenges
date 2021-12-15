@@ -10,7 +10,7 @@
 
 (def Positive-number (s/pred pos?))
 
-(def Id java.lang.Long)
+(def ID java.util.List)
 
 (defn uuid [] (java.util.UUID/randomUUID))
 

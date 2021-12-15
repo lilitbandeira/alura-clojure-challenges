@@ -89,6 +89,8 @@
 (defn create-schema! [connection]
   (d/transact connection schema-db))
 
+; -------------- QUERIES ---------------
+
 (defn get-all-costumers
   "Busca todos os clientes"
   [snapshot]
@@ -109,14 +111,6 @@
   (d/q '[:find (pull ?purchase [*])
          :where [?purchase :purchase/id]]
        snapshot))
-
-(defn get-cards-id
-  "Busca o db/id do cartão a partir do número"
-  [snapshot number]
-  (d/q '[:find ?card
-         :in $ ?card-number
-         :where [?card :card/number ?card-number]]
-       snapshot number))
 
 (defn get-cards-uuid
   "Busca o uuid do cartão a partir do número"
