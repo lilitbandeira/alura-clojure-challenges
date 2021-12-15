@@ -84,8 +84,7 @@
 
                 {:db/ident       :costumer/email
                  :db/valueType   :db.type/string
-                 :db/cardinality :db.cardinality/one}
-                ])
+                 :db/cardinality :db.cardinality/one}])
 
 (defn create-schema! [connection]
   (d/transact connection schema-db))
@@ -112,11 +111,20 @@
        snapshot))
 
 (defn get-cards-id
-  "Busca o id do cartão a partir do número"
+  "Busca o db/id do cartão a partir do número"
   [snapshot number]
   (d/q '[:find ?card
          :in $ ?card-number
          :where [?card :card/number ?card-number]]
+       snapshot number))
+
+(defn get-cards-uuid
+  "Busca o uuid do cartão a partir do número"
+  [snapshot number]
+  (d/q '[:find ?card-id
+         :in $ ?card-number
+         :where [?card :card/number ?card-number]
+         [?card :card/id ?card-id]]
        snapshot number))
 
 (defn get-purchases-by-card
@@ -128,3 +136,12 @@
          :where [?purchase :purchase/card ?card]]
        snapshot card-id)
   )
+
+(defn get-costumers-uuid
+  "Busca o uuid do cliente a partir do cpf"
+  [snapshot cpf]
+  (d/q '[:find ?costumer-id
+         :in $ ?costumer-cpf
+         :where [?costumer :costumer/cpf ?costumer-cpf]
+         [?costumer :costumer/id ?costumer-id]]
+       snapshot cpf))

@@ -18,6 +18,8 @@
 
 (pprint (db/get-all-costumers (d/db connection)))
 
+(pprint ((db/get-costumers-uuid (d/db connection) "987.654.321-00")))
+
 ; NEXT STEP: PASSAR ID DO CLIENTE
 (let [card-1 (cards/create-new-card "1111 2222 3333 4444" 546N "10/29" 8000M)
       card-2 (cards/create-new-card "3333 5555 3333 7777" 855N "10/27" 5500M)

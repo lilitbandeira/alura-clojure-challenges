@@ -12,7 +12,7 @@
              :card/cvv      Card-CVV,
              :card/validity Card-Validity,
              :card/limit    utils/Positive-number,
-             :card/costumer utils/Id})
+             :card/costumer s/Uuid})
 
 (s/defn create-new-card :- Card
   "Cria cartões vinculados a um cliente identificado"
@@ -20,7 +20,7 @@
     cvv :- Card-CVV,
     validity :- Card-Validity,
     limit :- utils/Positive-number
-    costumer :- utils/Id]
+    costumer :- s/Uuid]
    (create-new-card (utils/uuid) number cvv validity limit costumer))
 
   ([uuid :- s/Uuid
@@ -28,7 +28,7 @@
     cvv :- Card-CVV,
     validity :- Card-Validity,
     limit :- utils/Positive-number
-    costumer :- utils/Id]
+    costumer :- s/Uuid]
    {:card/id       uuid,
     :card/number   number,
     :card/cvv      cvv,
