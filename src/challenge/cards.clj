@@ -1,37 +1,45 @@
 (ns challenge.cards
   (:require [schema.core :as s]
+            [datomic.api :as d]
             [challenge.utils :as utils]))
 
 (def Card-number #"\d{4} \d{4} \d{4} \d{4}")
 (def Card-CVV (s/pred #(and (>= % 100) (<= % 999))))
 (def Card-Validity #"\d{2}/\d{2}")
 
-(s/def Card {:card/id         s/Uuid
-             :card/number     Card-number
-             :card/cvv        Card-CVV,
-             :card/validity   Card-Validity,
-             :card/limit      utils/Positive-number,
-             (s/optional-key :card/costumer) s/Uuid})
+(s/def Card {:card/id       s/Uuid
+             :card/number   Card-number
+             :card/cvv      Card-CVV,
+             :card/validity Card-Validity,
+             :card/limit    utils/Positive-number,
+             :card/costumer utils/Id})
 
 (s/defn create-new-card :- Card
-  "função que cria novo cartão"
-  ([card-number :- Card-number,
-    card-cvv :- Card-CVV,
-    card-validity :- Card-Validity,
-    card-limit :- utils/Positive-number]
-   (create-new-card (utils/uuid) card-number card-cvv card-validity card-limit))
+  "Cria cartões vinculados a um cliente identificado"
+  ([number :- Card-number,
+    cvv :- Card-CVV,
+    validity :- Card-Validity,
+    limit :- utils/Positive-number
+    costumer :- utils/Id]
+   (create-new-card (utils/uuid) number cvv validity limit costumer))
 
-  ([card-id :- s/Uuid
-    card-number :- Card-number,
-    card-cvv :- Card-CVV,
-    card-validity :- Card-Validity,
-    card-limit :- utils/Positive-number]
-   {:card/id       card-id
-    :card/number   card-number,
-    :card/cvv      card-cvv,
-    :card/validity card-validity,
-    :card/limit    card-limit}))
+  ([uuid :- s/Uuid
+    number :- Card-number,
+    cvv :- Card-CVV,
+    validity :- Card-Validity,
+    limit :- utils/Positive-number
+    costumer :- utils/Id]
+   {:card/id       uuid,
+    :card/number   number,
+    :card/cvv      cvv,
+    :card/validity validity,
+    :card/limit    limit,
+    :card/costumer costumer}))
 
 ; Escolhemos deixar, por hora, sem o card/costumer
 
-; lógicas referentes aos cartões (ex.: adicionar cartões) serão neste arquivo
+(defn add-new-cards!
+  "Adiciona novos cartões ao banco de dados"
+  [connection cards]
+  (d/transact connection cards))
+

@@ -10,6 +10,7 @@
 
 (def Positive-number (s/pred pos?))
 
+(def Id java.lang.Long)
+
 (defn uuid [] (java.util.UUID/randomUUID))
 
-(def Costumer-CPF #"\d{3}\.\d{3}\.\d{3}-\d{2}")
