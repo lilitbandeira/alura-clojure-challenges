@@ -1,7 +1,5 @@
 (ns challenge.db
-  (:require [java-time :as time]
-            [schema.core :as s]
-            [datomic.api :as d]))
+  (:require [datomic.api :as d]))
 
 ;-----------------------------------------------------------------
 
@@ -14,29 +12,26 @@
 (defn drop-database! []
   (d/delete-database db-uri))
 
-(def schema-db [; ---------- PURCHASE -----------------
-                {:db/ident       :purchase/id
+(def schema-db [; ---------- COSTUMER -----------------
+
+                {:db/ident       :costumer/id
                  :db/valueType   :db.type/uuid
                  :db/cardinality :db.cardinality/one
                  :db/unique      :db.unique/identity}
 
-                {:db/ident       :purchase/date
+                {:db/ident       :costumer/name
                  :db/valueType   :db.type/string
                  :db/cardinality :db.cardinality/one}
 
-                {:db/ident       :purchase/value
-                 :db/valueType   :db.type/bigdec
-                 :db/cardinality :db.cardinality/one}
-
-                {:db/ident       :purchase/category
+                {:db/ident       :costumer/cpf
                  :db/valueType   :db.type/string
                  :db/cardinality :db.cardinality/one}
 
-                {:db/ident       :purchase/establishment
+                {:db/ident       :costumer/email
                  :db/valueType   :db.type/string
                  :db/cardinality :db.cardinality/one}
 
-                {:db/ident       :purchase/card
+                {:db/ident       :costumer/card
                  :db/valueType   :db.type/ref
                  :db/cardinality :db.cardinality/one}
 
@@ -63,27 +58,31 @@
                  :db/valueType   :db.type/bigdec
                  :db/cardinality :db.cardinality/one}
 
-                {:db/ident       :card/costumer
-                 :db/valueType   :db.type/ref
-                 :db/cardinality :db.cardinality/one}
+                ; ---------- PURCHASE -----------------
 
-                ; ---------- COSTUMER -----------------
-
-                {:db/ident       :costumer/id
+                {:db/ident       :purchase/id
                  :db/valueType   :db.type/uuid
                  :db/cardinality :db.cardinality/one
                  :db/unique      :db.unique/identity}
 
-                {:db/ident       :costumer/name
+                {:db/ident       :purchase/date
                  :db/valueType   :db.type/string
                  :db/cardinality :db.cardinality/one}
 
-                {:db/ident       :costumer/cpf
+                {:db/ident       :purchase/value
+                 :db/valueType   :db.type/bigdec
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :purchase/category
                  :db/valueType   :db.type/string
                  :db/cardinality :db.cardinality/one}
 
-                {:db/ident       :costumer/email
+                {:db/ident       :purchase/establishment
                  :db/valueType   :db.type/string
+                 :db/cardinality :db.cardinality/one}
+
+                {:db/ident       :purchase/card
+                 :db/valueType   :db.type/ref
                  :db/cardinality :db.cardinality/one}])
 
 (defn create-schema! [connection]
@@ -124,18 +123,22 @@
 (defn get-purchases-by-card
   "Busca compras de um do cartão a partir do id"
   [snapshot card-id]
-  ;(d/pull snapshot '[*] card-id)
   (d/q '[:find (pull ?purchase [*])
          :in $ ?card
          :where [?purchase :purchase/card ?card]]
-       snapshot card-id)
-  )
+       snapshot card-id))
 
-(defn get-costumers-uuid
-  "Busca o uuid do cliente a partir do cpf"
-  [snapshot cpf]
-  (d/q '[:find ?costumer-id
-         :in $ ?costumer-cpf
-         :where [?costumer :costumer/cpf ?costumer-cpf]
-         [?costumer :costumer/id ?costumer-id]]
-       snapshot cpf))
+(defn get-purchase-data-by-costumer-uuid
+  "Busca informações de compras a partir do uuid do cliente"
+  [snapshot costumer-uuid]
+  (d/q '[:find ?costumer-name (max ?purchase-value) (count ?purchase-value)
+         :keys costumer most-expensive-purchase total-of-purchases
+         :in $ ?costumer-id
+         :where [?costumer :costumer/id ?costumer-id]
+         [?costumer :costumer/name ?costumer-name]
+         [?costumer :costumer/card ?costumer-card]
+         [?purchase :purchase/card ?costumer-card]
+         [?purchase :purchase/value ?purchase-value]]
+       snapshot costumer-uuid))
+
+;(pull ?costumer [:costumer/name {:costumer/card [{:purchase/_card [:purchase/value]}]}]) (max :purchase/value)
