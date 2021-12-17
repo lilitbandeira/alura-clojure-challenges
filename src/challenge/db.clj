@@ -58,6 +58,10 @@
                  :db/valueType   :db.type/bigdec
                  :db/cardinality :db.cardinality/one}
 
+                {:db/ident       :card/purchases
+                 :db/valueType   :db.type/ref
+                 :db/cardinality :db.cardinality/many}
+
                 ; ---------- PURCHASE -----------------
 
                 {:db/ident       :purchase/id

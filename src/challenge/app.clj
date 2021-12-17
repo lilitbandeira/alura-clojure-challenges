@@ -42,16 +42,24 @@
       purchase-6 (purchases/create-new-purchase 8000M "Eletronics" "ebay" [:card/id card3-id])
       purchase-7 (purchases/create-new-purchase 600M "Fashion" "Melissa" [:card/id card3-id])
       purchase-8 (purchases/create-new-purchase 2300M "Market" "Wallmart" [:card/id card3-id])]
-  (purchases/add-new-purchase! connection [purchase-1 purchase-2 purchase-3 purchase-4 purchase-5 purchase-6 purchase-7 purchase-8]))
+  (purchases/add-new-purchase! connection [purchase-1 purchase-2 purchase-3 purchase-4 purchase-5 purchase-6 purchase-7 purchase-8])
+  (cards/add-purchases-to-card! connection [:card/id card1-id] [:purchase/id (:purchase/id purchase-1)])
+  (cards/add-purchases-to-card! connection [:card/id card1-id] [:purchase/id (:purchase/id purchase-2)])
+  (cards/add-purchases-to-card! connection [:card/id card1-id] [:purchase/id (:purchase/id purchase-3)])
+  (cards/add-purchases-to-card! connection [:card/id card1-id] [:purchase/id (:purchase/id purchase-4)])
+  (cards/add-purchases-to-card! connection [:card/id card2-id] [:purchase/id (:purchase/id purchase-5)])
+  (cards/add-purchases-to-card! connection [:card/id card3-id] [:purchase/id (:purchase/id purchase-6)])
+  (cards/add-purchases-to-card! connection [:card/id card3-id] [:purchase/id (:purchase/id purchase-7)])
+  (cards/add-purchases-to-card! connection [:card/id card3-id] [:purchase/id (:purchase/id purchase-8)]))
 
 (pprint (db/get-all-purchases (d/db connection)))
 
 (pprint (db/get-purchases-by-card (d/db connection) 17592186045418)) ; RESGATAR COMPRAR POR CARTÃO
 
-(let [costumer1 (db/get-purchase-data-by-costumer-uuid (d/db connection) #uuid "8ceaf348-269e-4377-b4d0-4b95b336494c")
-      costumer2 (db/get-purchase-data-by-costumer-uuid (d/db connection) #uuid "5f16b964-a8c1-4a46-a09a-e1694978246c")
-      costumer3 (db/get-purchase-data-by-costumer-uuid (d/db connection) #uuid "b629ebe1-75f0-49ff-a6c5-6a4d5dc437fd")
-      costumer4 (db/get-purchase-data-by-costumer-uuid (d/db connection) #uuid "7bafebff-6201-4b29-81a0-106f21871b78")]
+(let [costumer1 (db/get-purchase-data-by-costumer-uuid (d/db connection) #uuid "e2a000b5-f1fa-4c50-b553-86e61a394bb9")
+      costumer2 (db/get-purchase-data-by-costumer-uuid (d/db connection) #uuid "c7aa3ca8-90cc-4fe7-9a6e-cbf69e0fbc96")
+      costumer3 (db/get-purchase-data-by-costumer-uuid (d/db connection) #uuid "f339b85f-9739-4019-a78c-91ca36e2f301")
+      costumer4 (db/get-purchase-data-by-costumer-uuid (d/db connection) #uuid "fca03c71-461e-41f8-9da0-7c36e3b90ca3")]
   (println costumer1 costumer2 costumer3 costumer4))
 
 ; FALTA

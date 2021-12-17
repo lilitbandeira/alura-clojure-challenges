@@ -11,7 +11,8 @@
              :card/number   Card-number
              :card/cvv      Card-CVV,
              :card/validity Card-Validity,
-             :card/limit    utils/Positive-number})
+             :card/limit    utils/Positive-number
+             (s/optional-key :card/purchases) s/Uuid})
 
 (s/defn create-new-card :- Card
   "Cria cartões vinculados a um cliente identificado"
@@ -36,4 +37,9 @@
   "Adiciona novos cartões ao banco de dados"
   [connection cards]
   (d/transact connection cards))
+
+(defn add-purchases-to-card!
+  "Adiciona compras a um cartão"
+  [connection card-id purchase]
+  (d/transact connection [[:db/add card-id :card/purchases purchase]]))
 
