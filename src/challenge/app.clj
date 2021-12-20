@@ -17,8 +17,6 @@
       card-4 (cards/create-new-card "6666 3333 9999 0000" 162N "05/29" 3000M)]
   (cards/add-new-cards! connection [card-1 card-2 card-3 card-4]))
 
-(pprint (db/get-all-cards (d/db connection)))
-
 (let [card1-id (ffirst (db/get-cards-uuid (d/db connection) "1111 2222 3333 4444"))
       card2-id (ffirst (db/get-cards-uuid (d/db connection) "3333 5555 3333 7777"))
       card3-id (ffirst (db/get-cards-uuid (d/db connection) "9999 6666 3333 8888"))
@@ -28,8 +26,6 @@
       costumer-3 (costumers/create-new-costumer "Inês Brasil" "654.732.321-13" "ines@rica.com" [:card/id card3-id])
       costumer-4 (costumers/create-new-costumer "Rupaul Charles" "974.701.751-19" "rupaul@pobre.com" [:card/id card4-id])]
   (costumers/add-new-costumer! connection [costumer-1 costumer-2 costumer-3 costumer-4]))
-
-(pprint (db/get-all-costumers (d/db connection)))
 
 (let [card1-id (ffirst (db/get-cards-uuid (d/db connection) "1111 2222 3333 4444"))
       card2-id (ffirst (db/get-cards-uuid (d/db connection) "3333 5555 3333 7777"))
@@ -52,15 +48,27 @@
   (cards/add-purchases-to-card! connection [:card/id card3-id] [:purchase/id (:purchase/id purchase-7)])
   (cards/add-purchases-to-card! connection [:card/id card3-id] [:purchase/id (:purchase/id purchase-8)]))
 
+(pprint (db/get-all-costumers (d/db connection)))
+(pprint (db/get-all-cards (d/db connection)))
 (pprint (db/get-all-purchases (d/db connection)))
 
-(pprint (db/get-purchases-by-card (d/db connection) 17592186045418)) ; RESGATAR COMPRAR POR CARTÃO
+(pprint (db/get-purchases-by-card (d/db connection) 17592186045418)) ; RESGATAR COMPRAS POR CARTÃO
 
-(let [costumer1 (db/get-purchase-data-by-costumer-uuid (d/db connection) #uuid "e2a000b5-f1fa-4c50-b553-86e61a394bb9")
-      costumer2 (db/get-purchase-data-by-costumer-uuid (d/db connection) #uuid "c7aa3ca8-90cc-4fe7-9a6e-cbf69e0fbc96")
-      costumer3 (db/get-purchase-data-by-costumer-uuid (d/db connection) #uuid "f339b85f-9739-4019-a78c-91ca36e2f301")
-      costumer4 (db/get-purchase-data-by-costumer-uuid (d/db connection) #uuid "fca03c71-461e-41f8-9da0-7c36e3b90ca3")]
-  (println costumer1 costumer2 costumer3 costumer4))
+(let [costumer1 (ffirst(db/get-costumers-uuid (d/db connection) "987.654.321-00"))
+      costumer1-data (db/get-purchase-data-by-costumer-uuid (d/db connection) costumer1)
+      costumer1-card (db/get-card-by-costumer-uuid (d/db connection) costumer1)
+      costumer2 (ffirst(db/get-costumers-uuid (d/db connection) "013.654.321-89"))
+      costumer2-data (db/get-purchase-data-by-costumer-uuid (d/db connection) costumer2)
+      costumer2-card (db/get-card-by-costumer-uuid (d/db connection) costumer2)
+      costumer3 (ffirst(db/get-costumers-uuid (d/db connection) "654.732.321-13"))
+      costumer3-data (db/get-purchase-data-by-costumer-uuid (d/db connection) costumer3)
+      costumer3-card (db/get-card-by-costumer-uuid (d/db connection) costumer3)
+      costumer4 (ffirst(db/get-costumers-uuid (d/db connection) "974.701.751-19"))
+      costumer4-data (db/get-purchase-data-by-costumer-uuid (d/db connection) costumer4)
+      costumer4-card (db/get-card-by-costumer-uuid (d/db connection) costumer4)]
+
+  (pprint [costumer1-card costumer2-card costumer3-card costumer4-card])
+  (costumers/check-customer-without-purchases [costumer1-card costumer2-card costumer3-card costumer4-card]))
 
 ; FALTA
 ; 1. definir função que compara quem fez a compra mais cara;

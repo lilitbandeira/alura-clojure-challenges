@@ -124,6 +124,15 @@
          [?card :card/id ?card-id]]
        snapshot number))
 
+(defn get-costumers-uuid
+  "Busca o uuid do cliente a partir do cpf"
+  [snapshot cpf]
+  (d/q '[:find ?costumer-id
+         :in $ ?costumer-cpf
+         :where [?costumer :costumer/cpf ?costumer-cpf]
+         [?costumer :costumer/id ?costumer-id]]
+       snapshot cpf))
+
 (defn get-purchases-by-card
   "Busca compras de um do cartão a partir do id"
   [snapshot card-id]
@@ -135,14 +144,25 @@
 (defn get-purchase-data-by-costumer-uuid
   "Busca informações de compras a partir do uuid do cliente"
   [snapshot costumer-uuid]
-  (d/q '[:find ?costumer-name (max ?purchase-value) (count ?purchase-value)
-         :keys costumer most-expensive-purchase total-of-purchases
+  (d/q '[:find ?costumer-name (max ?value) (count ?value)
+         :keys costumer higher-value-purchase total-purchases
          :in $ ?costumer-id
          :where [?costumer :costumer/id ?costumer-id]
          [?costumer :costumer/name ?costumer-name]
          [?costumer :costumer/card ?costumer-card]
-         [?purchase :purchase/card ?costumer-card]
-         [?purchase :purchase/value ?purchase-value]]
+         [?costumer-card :card/purchases ?purchase]
+         [?purchase :purchase/value ?value]]
        snapshot costumer-uuid))
 
-;(pull ?costumer [:costumer/name {:costumer/card [{:purchase/_card [:purchase/value]}]}]) (max :purchase/value)
+(defn get-card-by-costumer-uuid
+  "Busca informações do cartão a partir do uuid do cliente"
+  [snapshot costumer-uuid]
+  (d/q '[:find ?costumer-name (pull ?costumer-card [*])
+         :in $ ?costumer-id
+         :where [?costumer :costumer/id ?costumer-id]
+         [?costumer :costumer/name ?costumer-name]
+         [?costumer :costumer/card ?costumer-card]]
+       snapshot costumer-uuid))
+
+;[?card :card/purchases ?purchase]
+
