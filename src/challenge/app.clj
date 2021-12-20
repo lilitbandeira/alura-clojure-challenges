@@ -54,26 +54,21 @@
 
 (pprint (db/get-purchases-by-card (d/db connection) 17592186045418)) ; RESGATAR COMPRAS POR CARTÃO
 
-(let [costumer1 (ffirst(db/get-costumers-uuid (d/db connection) "987.654.321-00"))
+(let [costumer1 (ffirst (db/get-costumers-uuid (d/db connection) "987.654.321-00"))
       costumer1-data (db/get-purchase-data-by-costumer-uuid (d/db connection) costumer1)
       costumer1-card (db/get-card-by-costumer-uuid (d/db connection) costumer1)
-      costumer2 (ffirst(db/get-costumers-uuid (d/db connection) "013.654.321-89"))
+      costumer2 (ffirst (db/get-costumers-uuid (d/db connection) "013.654.321-89"))
       costumer2-data (db/get-purchase-data-by-costumer-uuid (d/db connection) costumer2)
       costumer2-card (db/get-card-by-costumer-uuid (d/db connection) costumer2)
-      costumer3 (ffirst(db/get-costumers-uuid (d/db connection) "654.732.321-13"))
+      costumer3 (ffirst (db/get-costumers-uuid (d/db connection) "654.732.321-13"))
       costumer3-data (db/get-purchase-data-by-costumer-uuid (d/db connection) costumer3)
       costumer3-card (db/get-card-by-costumer-uuid (d/db connection) costumer3)
-      costumer4 (ffirst(db/get-costumers-uuid (d/db connection) "974.701.751-19"))
+      costumer4 (ffirst (db/get-costumers-uuid (d/db connection) "974.701.751-19"))
       costumer4-data (db/get-purchase-data-by-costumer-uuid (d/db connection) costumer4)
       costumer4-card (db/get-card-by-costumer-uuid (d/db connection) costumer4)]
 
-  (pprint [costumer1-card costumer2-card costumer3-card costumer4-card])
-  (costumers/check-customer-without-purchases [costumer1-card costumer2-card costumer3-card costumer4-card]))
-
-; FALTA
-; 1. definir função que compara quem fez a compra mais cara;
-; 2. definir função que compara quem fez mais compras;
-; 3. criar nova query para retornar cliente que não tem compras;
-; 4. refazer funções de logic e testes;
+  (pprint (costumers/check-higher-value-purchase [costumer1-data costumer2-data costumer3-data costumer4-data]))
+  (pprint (costumers/check-total-purchase [costumer1-data costumer2-data costumer3-data costumer4-data]))
+  (pprint (costumers/check-customer-without-purchases [costumer1-card costumer2-card costumer3-card costumer4-card])))
 
 ;(println (db/drop-database!))
